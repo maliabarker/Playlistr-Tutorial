@@ -13,7 +13,8 @@ def video_url_creator(id_lst):
     for vid_id in id_lst:
         # We know that embedded YouTube videos always have this format
         video = 'https://youtube.com/embed/' + vid_id
-        videos.append(video)
+        videos.append(str(video))
+
     return videos
 
 @app.route('/')
@@ -31,7 +32,7 @@ def playlists_new():
 def playlists_submit():
     """Submit a new playlist."""
     # Grab the video IDs and make a list out of them
-    video_ids = request.form.get('video_ids').split()
+    video_ids = str(request.form.get('video_ids')).split()
     # call our helper function to create the list of links
     videos = video_url_creator(video_ids)
     playlist = {
@@ -58,7 +59,7 @@ def playlists_edit(playlist_id):
 @app.route('/playlists/<playlist_id>', methods=['POST'])
 def playlists_update(playlist_id):
     '''Submit edited playlist'''
-    video_ids = request.form.get('video_ids').split()
+    video_ids = str(request.form.get('video_ids')).split()
     videos = video_url_creator(video_ids)
     #create updated playlist 
     updated_playlist = {
