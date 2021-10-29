@@ -24,7 +24,7 @@ def playlists_index():
 @app.route('/playlists/new')
 def playlists_new():
     """Create new playlist"""
-    return render_template('playlists_new.html')
+    return render_template('playlists_new.html', playlist={}, title='New Playlist')
 
 # Note the methods parameter that explicitly tells the route that this is a POST
 @app.route('/playlists', methods=['POST'])
@@ -48,6 +48,32 @@ def playlists_show(playlist_id):
     """Show single playlist"""
     playlist = playlists.find_one({'_id': ObjectId(playlist_id)})
     return render_template('playlists_show.html', playlist=playlist)
+
+@app.route('/playlists/<playlist_id>/edit')
+def playlists_edit(playlist_id):
+    """Edit single playlist"""
+    playlist = playlists.find_one({'_id': ObjectId(playlist_id)})
+    return render_template('playlists_edit.html', playlist=playlist, title='Edit Playlist')
+
+@app.route('/playlists/<playlist_id>', methods=['POST'])
+def playlists_update(playlist_id):
+    '''Submit edited playlist'''
+    video_ids = request.form.get('video_ids').split()
+    videos = video_url_creator(video_ids)
+    #create updated playlist 
+    updated_playlist = {
+        'title': request.form.get('title'),
+        'description': request.form.get('description'),
+        'videos': videos,
+        'video_ids': video_ids
+    }
+    #set formed playlist to new update
+    playlists.update_one(
+        {'_id': ObjectId(playlist_id)},
+        {'$set': updated_playlist}
+    )
+    #take us back to playlist show page
+    return redirect(url_for('playlists_show', playlist_id=playlist_id))
 
 
 if __name__ == '__main__':
