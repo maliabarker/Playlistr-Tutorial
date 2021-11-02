@@ -1,7 +1,12 @@
+from flask_pymongo import pymongo
 from pymongo import MongoClient
 
-client = MongoClient()
-db = client.Playlistr
+
+CONNECTION_STRING = "mongodb+srv://malia-barker:NowbpedOY0I9bVme@playlistr-mb.jmhsu.mongodb.net/playlistr?retryWrites=true&w=majority"
+client = pymongo.MongoClient(CONNECTION_STRING)
+db = client.get_default_database()
+# playlists = pymongo.collection.Collection(db, 'playlists')
+
 playlists = db.playlists
 
 from flask import Flask, render_template, request, redirect, url_for
